@@ -1,0 +1,71 @@
+---
+# ABIDAR Bouchra, BOUSSEBAINE Mustapha et LARBI Abderahmane
+# TP : Données manquantes : Imputation et Co-clustering
+
+### MLDS 2019/2020
+### Encadré : M. NADIF
+---
+
+
+```{r}
+library(missMDA)
+library(FactoMineR)
+library(R.matlab)
+```
+
+```{r}
+cstr_<-readMat("cstr.mat")
+cstr_data <- cstr_$fea
+cstr_y <- cstr_$gnd
+
+WebACE_<-readMat("WebACE.mat")
+WebACE_data <- WebACE_$fea
+WebACE_y <- WebACE_$gnd
+
+
+reviews_<-readMat("reviews.mat")
+reviews_data <- reviews_$dtm
+reviews_y <- reviews_$classid
+
+```
+
+```{r}
+regions <- read.csv("region.csv",sep=",")
+regions$Régions <- NULL
+```
+
+```{r}
+data_missing <- function(data,dataCSV,dataExport){
+  DataAvecNan = read.csv(dataCSV)
+  ncomp <- estim_ncp(data,ncp.min=0,ncp.max=5)
+  res.imp <- imputeCA(DataAvecNan, ncp = ncomp$ncp)
+  res.imp_round = round(res.imp)
+  write.csv(res.imp_round, dataExport,row.names = FALSE)
+}
+```
+
+#### data cstr
+```{r}
+data_missing(cstr_data,"data_imputation/DataValeurManquante_cstr_1percent.csv","data_imputation/dataExpCstr1.csv")
+data_missing(cstr_data,"data_imputation/DataValeurManquante_cstr_2percent.csv","data_imputation/dataExpCstr2.csv")
+```
+
+```{r}
+data_missing(cstr_data,"data_imputation/DataValeurManquante_cstr_10percent.csv","data_imputation/dataExpCstr10.csv")
+data_missing(cstr_data,"data_imputation/DataValeurManquante_cstr_30percent.csv","data_imputation/dataExpCstr30.csv")
+data_missing(cstr_data,"data_imputation/DataValeurManquante_cstr_20percent.csv","data_imputation/dataExpCstr20.csv")
+```
+
+```{r}
+#ncomp <- estim_ncp(cstr_data,ncp.min=0,ncp.max=5)
+#res.ca <- CA(cstr_data, ncp = ncomp$ncp)
+```
+#### data region non sparse
+```{r}
+
+data_missing(regions,"data_imputation/DataValeurManquante_regions_1percent.csv","data_imputation/region1.csv")
+data_missing(regions,"data_imputation/DataValeurManquante_regions_2percent.csv","data_imputation/region2.csv")
+data_missing(regions,"data_imputation/DataValeurManquante_regions_10percent.csv","data_imputation/region10.csv")
+```
+
+
